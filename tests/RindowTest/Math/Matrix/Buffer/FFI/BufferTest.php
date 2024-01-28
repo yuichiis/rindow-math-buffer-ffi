@@ -9,6 +9,7 @@ use LogicException;
 use RuntimeException;
 use OutOfRangeException;
 use TypeError;
+use FFI;
 
 class Test extends TestCase
 {
@@ -333,5 +334,19 @@ class Test extends TestCase
             $this->expectExceptionMessage('__construct(): Argument #1 ($size) must be of type int');
         }
         $buf = new Buffer(new \stdClass(),NDArray::float32);
+    }
+    
+    public function testAddr()
+    {
+        $buf = new Buffer(4,NDArray::int32);
+        $buf[0] = 10;
+        $buf[1] = 11;
+        $buf[2] = 12;
+        $buf[3] = 13;
+        $addr = $buf->addr(1);
+        $this->assertInstanceOf(FFI\CData::class,$addr);
+        $this->assertEquals(11,$addr[0]);
+        $this->assertEquals(12,$addr[1]);
+        $this->assertEquals(13,$addr[2]);
     }
 }

@@ -11,6 +11,8 @@ use FFI;
 
 class Buffer implements LinearBuffer
 {
+    static protected ?FFI $ffi = null;
+
     protected static $typeString = [
         NDArray::bool    => 'uint8_t',
         NDArray::int8    => 'int8_t',
@@ -48,13 +50,16 @@ class Buffer implements LinearBuffer
 
     public function __construct(int $size, int $dtype)
     {
+        if(self::$ffi===null) {
+            self::$ffi = FFI::cdef();
+        }
         if(!isset(self::$typeString[$dtype])) {
             throw new InvalidArgumentException("Invalid data type");
         }
         $this->size = $size;
         $this->dtype = $dtype;
         $declaration = self::$typeString[$dtype];
-        $this->data = FFI::new("{$declaration}[{$size}]");
+        $this->data = self::$ffi->new("{$declaration}[{$size}]");
     }
 
     protected function assertOffset($method, mixed $offset) : void
@@ -125,7 +130,7 @@ class Buffer implements LinearBuffer
     public function dump() : string
     {
         $byte = self::$valueSize[$this->dtype] * $this->size;
-        $buf = FFI::new("char[$byte]");
+        $buf = self::$ffi->new("char[$byte]");
         FFI::memcpy($buf,$this->data,$byte);
         return FFI::string($buf,$byte);
     }
