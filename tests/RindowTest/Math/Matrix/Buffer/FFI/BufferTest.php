@@ -11,7 +11,7 @@ use OutOfRangeException;
 use TypeError;
 use FFI;
 
-class Test extends TestCase
+class BufferTest extends TestCase
 {
     //public function testExtensionVersion()
     //{

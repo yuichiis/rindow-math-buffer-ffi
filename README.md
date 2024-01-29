@@ -8,10 +8,21 @@ Status:
 
 "The rindow math buffer ffi" is a buffer for the math library. Available in libraries with FFI interface.
 
+- Provides Universal Buffer for 1-dimension for data exchange between C,C+ language and PHP.
+
+
 Please see the documents about Buffer objects on [Rindow Mathematics](https://rindow.github.io/mathematics/matrix/arrayobjects.html#buffer-object) web pages.
 
 Requirements
 ============
 
-- PHP8.0 or PHP 8.1 or PHP8.2 or PHP8.3
+- PHP 8.1 or PHP8.2 or PHP8.3
+- Linux or Windows 10
+
+How to setup
+============
+Install using composer.
+
+$ composer require rindow/rindow-math-buffer-ffi
+
 
