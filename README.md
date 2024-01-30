@@ -17,7 +17,7 @@ Requirements
 ============
 
 - PHP 8.1 or PHP8.2 or PHP8.3
-- Linux or Windows 10
+- Linux or Windows
 
 How to setup
 ============
