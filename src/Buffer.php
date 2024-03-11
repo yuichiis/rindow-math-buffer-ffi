@@ -11,6 +11,7 @@ use FFI;
 
 class Buffer implements LinearBuffer
 {
+    const MAX_BYTES = 2147483648; // 2**31
     static protected ?FFI $ffi = null;
 
     protected static $typeString = [
@@ -27,6 +28,10 @@ class Buffer implements LinearBuffer
         //NDArray::float16 => 'N/A',
         NDArray::float32 => 'float',
         NDArray::float64 => 'double',
+        //NDArray::complex16 => 'N/A',
+        //NDArray::complex32 => 'N/A',
+        NDArray::complex64 => 'rindow_complex_float',
+        NDArray::complex128  => 'rindow_complex_double',
     ];
     protected static $valueSize = [
         NDArray::bool    => 1,
@@ -42,6 +47,10 @@ class Buffer implements LinearBuffer
         //NDArray::float16 => 'N/A',
         NDArray::float32 => 4,
         NDArray::float64 => 8,
+        //NDArray::complex16 => 'N/A',
+        //NDArray::complex32 => 'N/A',
+        NDArray::complex64 => 8,
+        NDArray::complex128  => 16,
     ];
 
     protected int $size;
@@ -51,10 +60,15 @@ class Buffer implements LinearBuffer
     public function __construct(int $size, int $dtype)
     {
         if(self::$ffi===null) {
-            self::$ffi = FFI::cdef();
+            $code = file_get_contents(__DIR__.'/buffer.h');
+            self::$ffi = FFI::cdef($code);
         }
         if(!isset(self::$typeString[$dtype])) {
             throw new InvalidArgumentException("Invalid data type");
+        }
+        $limitsize = intdiv(self::MAX_BYTES,self::$valueSize[$dtype]);
+        if($size>=$limitsize) {
+            throw new InvalidArgumentException("Data size is too large.");
         }
         $this->size = $size;
         $this->dtype = $dtype;
@@ -77,6 +91,12 @@ class Buffer implements LinearBuffer
         if(!is_int($offset)) {
             throw new TypeError($method.'(): Argument #1 ($offset) must be of type int');
         }
+    }
+
+    protected function isComplex($dtype=null) : bool
+    {
+        $dtype = $dtype ?? $this->dtype;
+        return $dtype==NDArray::complex64||$dtype==NDArray::complex128;
     }
 
     public function dtype() : int
@@ -118,6 +138,20 @@ class Buffer implements LinearBuffer
     public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->assertOffset('offsetSet',$offset);
+        if($this->isComplex()) {
+            if(is_array($value)) {
+                [$real,$imag] = $value;
+            } elseif(is_object($value)) {
+                $real = $value->real;
+                $imag = $value->imag;
+            } else {
+                $type = gettype($value);
+                throw new InvalidArgumentException("Cannot convert to complex number.: ".$type);
+            }
+            $value = self::$ffi->new(self::$typeString[$this->dtype]);
+            $value->real = $real;
+            $value->imag = $imag;
+        }
         $this->data[$offset] = $value;
     }
 
