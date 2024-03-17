@@ -3,7 +3,7 @@ name: tests
 on: [push]
 
 jobs:
-  tests:
+  no_ext_tests:
     runs-on: ubuntu-22.04
 
     strategy:
@@ -27,5 +27,5 @@ jobs:
           configuration: tests/phpunit.xml
           version: 10.5
           php_version: ${{ matrix.php }}
-          php_extensions: ffi
+          args: --filter ReleaseTest
 
