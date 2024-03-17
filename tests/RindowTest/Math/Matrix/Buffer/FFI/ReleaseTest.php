@@ -19,4 +19,10 @@ class ReleaseTest extends TestCase
             $this->assertFalse($factory->isAvailable());
         }
     }
+    
+    public function testiniget()
+    {
+        var_dump(ini_get('open_basedir'));
+        $this->assertTrue(true);
+    }
 }
