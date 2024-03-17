@@ -23,6 +23,7 @@ class ReleaseTest extends TestCase
     public function testiniget()
     {
         var_dump(ini_get('open_basedir'));
+        phpinfo();
         $this->assertTrue(true);
     }
 }
