@@ -24,6 +24,12 @@ jobs:
           php_version: ${{ matrix.php }}
           php_extensions: ffi
 
+      - name: PHP Static Analysys
+        uses: php-actions/phpstan@v3
+        with:
+          php_version: ${{ matrix.php }}
+          path: src/
+
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v3
         with:
