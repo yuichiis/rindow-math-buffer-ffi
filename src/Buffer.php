@@ -9,11 +9,17 @@ use OutOfRangeException;
 use LogicException;
 use FFI;
 
+class complex_t {
+    public float $real;
+    public float $imag;
+}
+
 class Buffer implements LinearBuffer
 {
     const MAX_BYTES = 2147483648; // 2**31
     static protected ?FFI $ffi = null;
 
+    /** @var array<int,string> $typeString */
     protected static $typeString = [
         NDArray::bool    => 'uint8_t',
         NDArray::int8    => 'int8_t',
@@ -33,6 +39,7 @@ class Buffer implements LinearBuffer
         NDArray::complex64 => 'rindow_complex_float',
         NDArray::complex128  => 'rindow_complex_double',
     ];
+    /** @var array<int,int> $valueSize */
     protected static $valueSize = [
         NDArray::bool    => 1,
         NDArray::int8    => 1,
@@ -76,7 +83,7 @@ class Buffer implements LinearBuffer
         $this->data = self::$ffi->new("{$declaration}[{$size}]");
     }
 
-    protected function assertOffset($method, mixed $offset) : void
+    protected function assertOffset(string $method, mixed $offset) : void
     {
         if(!is_int($offset)) {
             throw new TypeError($method.'(): Argument #1 ($offset) must be of type int');
@@ -86,14 +93,14 @@ class Buffer implements LinearBuffer
         }
     }
 
-    protected function assertOffsetIsInt($method, mixed $offset) : void
+    protected function assertOffsetIsInt(string $method, mixed $offset) : void
     {
         if(!is_int($offset)) {
             throw new TypeError($method.'(): Argument #1 ($offset) must be of type int');
         }
     }
 
-    protected function isComplex($dtype=null) : bool
+    protected function isComplex(int $dtype=null) : bool
     {
         $dtype = $dtype ?? $this->dtype;
         return $dtype==NDArray::complex64||$dtype==NDArray::complex128;
@@ -148,6 +155,7 @@ class Buffer implements LinearBuffer
                 $type = gettype($value);
                 throw new InvalidArgumentException("Cannot convert to complex number.: ".$type);
             }
+            /** @var complex_t $value */
             $value = self::$ffi->new(self::$typeString[$this->dtype]);
             $value->real = $real;
             $value->imag = $imag;
