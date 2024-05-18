@@ -32,26 +32,45 @@ jobs:
 #            php: '8.3'
 
     steps:
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          # PHP Extras
+          coverage: none
+          tools: composer, phpunit:10.5, phpstan
+          #ini-values: "memory_limit=512M"
+          extensions: ffi
+
       - name: Checkout codes
         uses: "actions/checkout@v4"
 
+      #- name: Composer
+      #  uses: php-actions/composer@v6
+      #  with:
+      #    php_version: ${{ matrix.php }}
+      #    php_extensions: ffi
+
       - name: Composer
-        uses: php-actions/composer@v6
-        with:
-          php_version: ${{ matrix.php }}
-          php_extensions: ffi
+        run: composer update
+
+      #- name: PHP Static Analysys
+      #  uses: php-actions/phpstan@v3
+      #  with:
+      #    php_version: ${{ matrix.php }}
+      #    path: src/
 
       - name: PHP Static Analysys
-        uses: php-actions/phpstan@v3
-        with:
-          php_version: ${{ matrix.php }}
-          path: src/
+        run: phpstan
+
+      #- name: PHPUnit Tests
+      #  uses: php-actions/phpunit@v3
+      #  with:
+      #    configuration: tests/phpunit.xml
+      #    version: 10.5
+      #    php_version: ${{ matrix.php }}
+      #    php_extensions: ffi
 
       - name: PHPUnit Tests
-        uses: php-actions/phpunit@v3
-        with:
-          configuration: tests/phpunit.xml
-          version: 10.5
-          php_version: ${{ matrix.php }}
-          php_extensions: ffi
+        run: phpunit -c tests
 
