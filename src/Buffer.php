@@ -186,4 +186,9 @@ class Buffer implements LinearBuffer
         }
         FFI::memcpy($this->data,$string,$byte);
     }
+
+    public function __clone()
+    {
+        $this->data = clone $this->data;
+    }
 }

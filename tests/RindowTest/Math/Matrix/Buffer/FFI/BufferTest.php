@@ -377,4 +377,23 @@ class BufferTest extends TestCase
         $this->assertEquals(12,$addr[1]);
         $this->assertEquals(13,$addr[2]);
     }
+
+    public function testClone()
+    {
+        $buf = new Buffer(4,NDArray::int32);
+        $buf[0] = 10;
+        $buf[1] = 11;
+        $buf[2] = 12;
+        $buf[3] = 13;
+        $clone = clone $buf;
+        $buf[0] = 0;
+        $buf[1] = 1;
+        $buf[2] = 2;
+        $buf[3] = 3;
+
+        $this->assertEquals(10,$clone[0]);
+        $this->assertEquals(11,$clone[1]);
+        $this->assertEquals(12,$clone[2]);
+        $this->assertEquals(13,$clone[3]);
+    }
 }
