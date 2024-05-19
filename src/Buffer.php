@@ -7,6 +7,7 @@ use TypeError;
 use InvalidArgumentException;
 use OutOfRangeException;
 use LogicException;
+use RuntimeException;
 use FFI;
 
 class complex_t {
@@ -75,10 +76,7 @@ class Buffer implements LinearBuffer
             if ($code === false) {
                 throw new RuntimeException("Unable to read buffer.h file");
             }
-            self::$ffi = @FFI::cdef($code);
-            if (self::$ffi === null) {
-                throw new RuntimeException("Unable to initialize FFI");
-            }
+            self::$ffi = FFI::cdef($code);
         }
 
         if(!isset(self::$typeString[$dtype])) {
