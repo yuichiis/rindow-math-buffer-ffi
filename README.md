@@ -17,7 +17,7 @@ Requirements
 ============
 
 - PHP 8.1 or PHP8.2 or PHP8.3
-- Linux or Windows or MacOS
+- Linux or Windows
 
 How to setup
 ============
@@ -31,7 +31,7 @@ $ composer require rindow/rindow-math-buffer-ffi
 Known issues
 ============
 
-Accessing C structures using FFI is unstable on MacOS. Therefore, using complex numbers in C can result in segmentation faults.
-
-To avoid this problem, I am accessing complex numbers via PHP's stdClass. This may cause a decrease in speed.
-This issue was discovered on his MacOS host on Github.
+On MacOS, unexplained errors often occur on Github's MacOS host.
+This problem especially occurs when complex numbers are used,
+but the cause is unknown because it also occurs in implementations
+that do not use C language structures.
