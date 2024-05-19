@@ -27,11 +27,3 @@ Install using composer.
 ```shell
 $ composer require rindow/rindow-math-buffer-ffi
 ```
-
-Known issues
-============
-
-On MacOS, unexplained errors often occur on Github's MacOS host.
-This problem especially occurs when complex numbers are used,
-but the cause is unknown because it also occurs in implementations
-that do not use C language structures.
