@@ -12,6 +12,10 @@ class BufferFactory
 
     public function Buffer(int $size, int $dtype) : Buffer
     {
-        return new Buffer($size, $dtype);
+        if(PHP_OS=='Darwin') {
+            return new BufferMacOS($size, $dtype);
+        } else {
+            return new Buffer($size, $dtype);
+        }
     }
 }
