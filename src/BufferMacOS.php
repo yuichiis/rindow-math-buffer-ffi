@@ -9,10 +9,9 @@ class BufferMacOS extends Buffer
 {
     public function __construct(int $size, int $dtype)
     {
-        //if(parent::$ffi===null) {
-        //    $code = file_get_contents(__DIR__.'/buffer.h');
-        //    parent::$ffi = FFI::cdef($code);
-        //}
+        if(parent::$ffi===null) {
+            parent::$ffi = FFI::cdef('');
+        }
         if(!isset(parent::$typeString[$dtype])) {
             throw new InvalidArgumentException("Invalid data type");
         }
@@ -79,8 +78,7 @@ class BufferMacOS extends Buffer
                 $type = gettype($value);
                 throw new InvalidArgumentException("Cannot convert to complex number.: ".$type);
             }
-            /** @var complex_t $value */
-            $value = self::$ffi->new(self::$typeString[$this->dtype]);
+            $offset *= 2;
             $this->data[$offset] = $real;
             $this->data[$offset+1] = $imag;
         } else {
