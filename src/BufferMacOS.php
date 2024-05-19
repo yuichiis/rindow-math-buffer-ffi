@@ -1,6 +1,10 @@
 <?php
 namespace Rindow\Math\Buffer\FFI;
 
+use FFI;
+use InvalidArgumentException;
+use Interop\Polite\Math\Matrix\NDArray;
+
 class BufferMacOS extends Buffer
 {
     public function __construct(int $size, int $dtype)
