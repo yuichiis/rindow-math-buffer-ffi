@@ -21,6 +21,7 @@ Requirements
 
 How to setup
 ============
+
 Install using composer.
 
 ```shell
@@ -30,5 +31,7 @@ $ composer require rindow/rindow-math-buffer-ffi
 Known issues
 ============
 
-Accessing C structures using FFI is unstable on MacOS. Therefore, using complex numbers may cause a segmentation fault.
-This issue has been discovered on MacOS hosts on Github.
+Accessing C structures using FFI is unstable on MacOS. Therefore, using complex numbers in C can result in segmentation faults.
+
+To avoid this problem, I am accessing complex numbers via PHP's stdClass. This may cause a decrease in speed.
+This issue was discovered on his MacOS host on Github.
