@@ -23,6 +23,12 @@ How to setup
 ============
 Install using composer.
 
+```shell
 $ composer require rindow/rindow-math-buffer-ffi
+```
 
+Known issues
+============
 
+Accessing C structures using FFI is unstable on MacOS. Therefore, using complex numbers may cause a segmentation fault.
+This issue has been discovered on MacOS hosts on Github.

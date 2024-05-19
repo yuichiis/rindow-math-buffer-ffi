@@ -100,35 +100,33 @@ class BufferTest extends TestCase
         $this->assertTrue(is_float($buf[0]));
         $this->assertEquals(0.5,$buf[2]);
 
-        if(PHP_OS!='Darwin') {
-            $buf = new Buffer(3,NDArray::complex64);
-            $this->assertEquals(NDArray::complex64,$buf->dtype());
-            $this->assertEquals(3,count($buf));
-            $this->assertEquals(8,$buf->value_size());
-            $this->assertEquals(NDArray::complex64,$buf->dtype());
-            $buf[1] = [1.5,2.5];
-            $buf[2] = (object)['real'=>3.5,'imag'=>4.5];
-            $vv = $buf[1];
-            $this->assertEquals(1.5,$vv->real);
-            $this->assertEquals(2.5,$vv->imag);
-            $vv = $buf[2];
-            $this->assertEquals(3.5,$vv->real);
-            $this->assertEquals(4.5,$vv->imag);
-    
-            $buf = new Buffer(3,NDArray::complex128);
-            $this->assertEquals(NDArray::complex128,$buf->dtype());
-            $this->assertEquals(3,count($buf));
-            $this->assertEquals(16,$buf->value_size());
-            $this->assertEquals(NDArray::complex128,$buf->dtype());
-            $buf[1] = [1.5,2.5];
-            $buf[2] = (object)['real'=>3.5,'imag'=>4.5];
-            $vv = $buf[1];
-            $this->assertEquals(1.5,$vv->real);
-            $this->assertEquals(2.5,$vv->imag);
-            $vv = $buf[2];
-            $this->assertEquals(3.5,$vv->real);
-            $this->assertEquals(4.5,$vv->imag);
-        }
+        $buf = new Buffer(3,NDArray::complex64);
+        $this->assertEquals(NDArray::complex64,$buf->dtype());
+        $this->assertEquals(3,count($buf));
+        $this->assertEquals(8,$buf->value_size());
+        $this->assertEquals(NDArray::complex64,$buf->dtype());
+        $buf[1] = [1.5,2.5];
+        $buf[2] = (object)['real'=>3.5,'imag'=>4.5];
+        $vv = $buf[1];
+        $this->assertEquals(1.5,$vv->real);
+        $this->assertEquals(2.5,$vv->imag);
+        $vv = $buf[2];
+        $this->assertEquals(3.5,$vv->real);
+        $this->assertEquals(4.5,$vv->imag);
+
+        $buf = new Buffer(3,NDArray::complex128);
+        $this->assertEquals(NDArray::complex128,$buf->dtype());
+        $this->assertEquals(3,count($buf));
+        $this->assertEquals(16,$buf->value_size());
+        $this->assertEquals(NDArray::complex128,$buf->dtype());
+        $buf[1] = [1.5,2.5];
+        $buf[2] = (object)['real'=>3.5,'imag'=>4.5];
+        $vv = $buf[1];
+        $this->assertEquals(1.5,$vv->real);
+        $this->assertEquals(2.5,$vv->imag);
+        $vv = $buf[2];
+        $this->assertEquals(3.5,$vv->real);
+        $this->assertEquals(4.5,$vv->imag);
     }
 
     public function testOffsetExists()
