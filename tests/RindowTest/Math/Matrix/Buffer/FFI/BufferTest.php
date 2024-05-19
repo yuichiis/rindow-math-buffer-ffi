@@ -4,6 +4,7 @@ namespace RindowTest\Math\Buffer\FFI\BufferTest;
 use PHPUnit\Framework\TestCase;
 use Interop\Polite\Math\Matrix\NDArray;
 use Rindow\Math\Buffer\FFI\Buffer;
+use Rindow\Math\Buffer\FFI\BufferFactory;
 use ArgumentCountError;
 use LogicException;
 use RuntimeException;
@@ -13,6 +14,12 @@ use FFI;
 
 class BufferTest extends TestCase
 {
+    protected object $factory; 
+    public function setUp() : void
+    {
+        $this->factory = new BufferFactory();
+    }
+
     //public function testExtensionVersion()
     //{
     //    $this->assertEquals('0.1.7',phpversion('rindow_openblas'));
@@ -20,7 +27,7 @@ class BufferTest extends TestCase
 
     public function testNormal()
     {
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $buf[0] = 0.5;
         $buf[1] = 1.5;
         $buf[2] = 2.5;
@@ -34,73 +41,73 @@ class BufferTest extends TestCase
 
     public function testDtypesAndOffsetOfDtypes()
     {
-        $buf = new Buffer(3,NDArray::bool);
+        $buf = $this->factory->Buffer(3,NDArray::bool);
         $buf[2] = true;
         $this->assertEquals(NDArray::bool,$buf->dtype());
         $this->assertTrue(is_bool($buf[0]));
         $this->assertEquals(true,$buf[2]);
 
-        $buf = new Buffer(3,NDArray::int8);
+        $buf = $this->factory->Buffer(3,NDArray::int8);
         $buf[2] = -1;
         $this->assertEquals(NDArray::int8,$buf->dtype());
         $this->assertTrue(is_int($buf[0]));
         $this->assertEquals(-1,$buf[2]);
 
-        $buf = new Buffer(3,NDArray::uint8);
+        $buf = $this->factory->Buffer(3,NDArray::uint8);
         $buf[2] = -1;
         $this->assertEquals(NDArray::uint8,$buf->dtype());
         $this->assertTrue(is_int($buf[0]));
         $this->assertEquals(255,$buf[2]);
 
-        $buf = new Buffer(3,NDArray::int16);
+        $buf = $this->factory->Buffer(3,NDArray::int16);
         $buf[2] = -1;
         $this->assertEquals(NDArray::int16,$buf->dtype());
         $this->assertTrue(is_int($buf[0]));
         $this->assertEquals(-1,$buf[2]);
 
-        $buf = new Buffer(3,NDArray::uint16);
+        $buf = $this->factory->Buffer(3,NDArray::uint16);
         $buf[2] = -1;
         $this->assertEquals(NDArray::uint16,$buf->dtype());
         $this->assertTrue(is_int($buf[0]));
         $this->assertEquals(65535,$buf[2]);
 
-        $buf = new Buffer(3,NDArray::int32);
+        $buf = $this->factory->Buffer(3,NDArray::int32);
         $buf[2] = -1;
         $this->assertEquals(NDArray::int32,$buf->dtype());
         $this->assertTrue(is_int($buf[0]));
         $this->assertEquals(-1,$buf[2]);
 
-        $buf = new Buffer(3,NDArray::uint32);
+        $buf = $this->factory->Buffer(3,NDArray::uint32);
         $buf[2] = -1;
         $this->assertEquals(NDArray::uint32,$buf->dtype());
         $this->assertTrue(is_int($buf[0]));
         $this->assertEquals(4294967295,$buf[2]);
 
-        $buf = new Buffer(3,NDArray::int64);
+        $buf = $this->factory->Buffer(3,NDArray::int64);
         $buf[2] = -1;
         $this->assertEquals(NDArray::int64,$buf->dtype());
         $this->assertTrue(is_int($buf[0]));
         $this->assertEquals(-1,$buf[2]);
 
-        $buf = new Buffer(3,NDArray::uint64);
+        $buf = $this->factory->Buffer(3,NDArray::uint64);
         $buf[2] = -1;
         $this->assertEquals(NDArray::uint64,$buf->dtype());
         $this->assertTrue(is_int($buf[0]));
         $this->assertEquals(-1,$buf[2]); // *** CAUTION ****
 
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $buf[2] = 0.5;
         $this->assertEquals(NDArray::float32,$buf->dtype());
         $this->assertTrue(is_float($buf[0]));
         $this->assertEquals(0.5,$buf[2]);
 
-        $buf = new Buffer(3,NDArray::float64);
+        $buf = $this->factory->Buffer(3,NDArray::float64);
         $buf[2] = 0.5;
         $this->assertEquals(NDArray::float64,$buf->dtype());
         $this->assertTrue(is_float($buf[0]));
         $this->assertEquals(0.5,$buf[2]);
 
-        $buf = new Buffer(3,NDArray::complex64);
+        $buf = $this->factory->Buffer(3,NDArray::complex64);
         $this->assertEquals(NDArray::complex64,$buf->dtype());
         $this->assertEquals(3,count($buf));
         $this->assertEquals(8,$buf->value_size());
@@ -114,7 +121,7 @@ class BufferTest extends TestCase
         $this->assertEquals(3.5,$vv->real);
         $this->assertEquals(4.5,$vv->imag);
 
-        $buf = new Buffer(3,NDArray::complex128);
+        $buf = $this->factory->Buffer(3,NDArray::complex128);
         $this->assertEquals(NDArray::complex128,$buf->dtype());
         $this->assertEquals(3,count($buf));
         $this->assertEquals(16,$buf->value_size());
@@ -131,7 +138,7 @@ class BufferTest extends TestCase
 
     public function testOffsetExists()
     {
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->assertTrue(isset($buf[0]));
         $this->assertTrue(isset($buf[2]));
         $this->assertFalse(isset($buf[-1]));
@@ -140,7 +147,7 @@ class BufferTest extends TestCase
 
     public function testUnset()
     {
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $buf[0] = 1;
         $this->assertEquals(1,$buf[0]);
         $this->expectException(LogicException::class);
@@ -151,12 +158,12 @@ class BufferTest extends TestCase
 
     public function testDumpAndLoad()
     {
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $buf[0] = 1;
         $buf[1] = 2;
         $buf[2] = 3;
 
-        $buf2 = new Buffer(3,NDArray::float32);
+        $buf2 = $this->factory->Buffer(3,NDArray::float32);
         $buf2[0] = 0;
         $buf2[1] = 0;
         $buf2[2] = 0;
@@ -171,7 +178,7 @@ class BufferTest extends TestCase
     public function testSetOutOfBoundsWithHighOffset()
     {
         //$buf = new \SplFixedArray(3);
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->expectException(OutOfRangeException::class);
         $this->expectExceptionMessage('Index invalid or out of range');
         $buf[3] = 1;
@@ -180,7 +187,7 @@ class BufferTest extends TestCase
     public function testSetOutOfBoundsWithLowOffset()
     {
         //$buf = new \SplFixedArray(3);
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->expectException(OutOfRangeException::class);
         $this->expectExceptionMessage('Index invalid or out of range');
         $buf[-1] = 1;
@@ -189,7 +196,7 @@ class BufferTest extends TestCase
     public function testGetOutOfBoundsWithHighOffset()
     {
         //$buf = new \SplFixedArray(3);
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->expectException(OutOfRangeException::class);
         $this->expectExceptionMessage('Index invalid or out of range');
         $x = $buf[3];
@@ -198,7 +205,7 @@ class BufferTest extends TestCase
     public function testGetOutOfBoundsWithLowOffset()
     {
         //$buf = new \SplFixedArray(3);
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->expectException(OutOfRangeException::class);
         $this->expectExceptionMessage('Index invalid or out of range');
         $x = $buf[-1];
@@ -207,7 +214,7 @@ class BufferTest extends TestCase
     public function testUnsetOutOfBoundsWithHighOffset()
     {
         //$buf = new \SplFixedArray(3);
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Illigal Operation');
         unset($buf[3]);
@@ -217,7 +224,7 @@ class BufferTest extends TestCase
     public function testUnsetOutOfBoundsWithLowOffset()
     {
         //$buf = new \SplFixedArray(3);
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Illigal Operation');
         unset($buf[-1]);
@@ -227,20 +234,20 @@ class BufferTest extends TestCase
     public function testIsExistsOutOfBoundsWithHighOffset()
     {
         //$buf = new \SplFixedArray(3);
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->assertFalse(isset($buf[3]));
     }
 
     public function testIsExistsOutOfBoundsWithLowOffset()
     {
         //$buf = new \SplFixedArray(3);
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->assertFalse(isset($buf[-1]));
     }
 
     public function testOffsetSetWithNoOffset()
     {
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->expectException(ArgumentCountError::class);
         //if(version_compare(PHP_VERSION, '8.0.0')<0) {
         //    $this->expectExceptionMessage('offsetSet() expects exactly 2 parameters, 0 given');
@@ -253,7 +260,7 @@ class BufferTest extends TestCase
 
     public function testOffsetSetIllegalTypeOffset()
     {
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->expectException(TypeError::class);
         if(version_compare(PHP_VERSION, '8.0.0')<0) {
             $this->expectExceptionMessage('offsetSet() expects parameter 1 to be int');
@@ -265,7 +272,7 @@ class BufferTest extends TestCase
 
     public function testOffsetGetWithNoOffset()
     {
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->expectException(ArgumentCountError::class);
         //if(version_compare(PHP_VERSION, '8.0.0')<0) {
         //    $this->expectExceptionMessage('offsetGet() expects exactly 1 parameter, 0 given');
@@ -278,7 +285,7 @@ class BufferTest extends TestCase
 
     public function testOffsetGetIllegalType()
     {
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->expectException(TypeError::class);
         if(version_compare(PHP_VERSION, '8.0.0')<0) {
             $this->expectExceptionMessage('offsetGet() expects parameter 1 to be int');
@@ -290,7 +297,7 @@ class BufferTest extends TestCase
 
     public function testOffsetUnsetWithNoOffset()
     {
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->expectException(ArgumentCountError::class);
         //if(version_compare(PHP_VERSION, '8.0.0')<0) {
         //    $this->expectExceptionMessage('offsetUnset() expects exactly 1 parameter, 0 given');
@@ -303,7 +310,7 @@ class BufferTest extends TestCase
 
     public function testOffsetUnsetIllegalType()
     {
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         //$this->expectException(TypeError::class);
         //if(version_compare(PHP_VERSION, '8.0.0')<0) {
         //    $this->expectExceptionMessage('offsetUnset() expects parameter 1 to be int');
@@ -317,7 +324,7 @@ class BufferTest extends TestCase
 
     public function testLoadWithNoOffset()
     {
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->expectException(ArgumentCountError::class);
         //if(version_compare(PHP_VERSION, '8.0.0')<0) {
         //    $this->expectExceptionMessage('load() expects exactly 1 parameter, 0 given');
@@ -330,7 +337,7 @@ class BufferTest extends TestCase
 
     public function testLoadIllegalType()
     {
-        $buf = new Buffer(3,NDArray::float32);
+        $buf = $this->factory->Buffer(3,NDArray::float32);
         $this->expectException(TypeError::class);
         if(version_compare(PHP_VERSION, '8.0.0')<0) {
             $this->expectExceptionMessage('load() expects parameter 1 to be string');
@@ -350,23 +357,23 @@ class BufferTest extends TestCase
         //    $this->expectExceptionMessage('__construct() expects exactly 2 arguments, 0 given');
         //}
         $this->expectExceptionMessage('Too few arguments to function');
-        $buf = new Buffer();
+        $buf = $this->factory->Buffer();
     }
 
     public function testConstractIllegalType()
     {
         $this->expectException(TypeError::class);
         if(version_compare(PHP_VERSION, '8.0.0')<0) {
-            $this->expectExceptionMessage('__construct() expects parameter 1 to be int');
+            $this->expectExceptionMessage('BufferFactory::Buffer() expects parameter 1 to be int');
         } else {
-            $this->expectExceptionMessage('__construct(): Argument #1 ($size) must be of type int');
+            $this->expectExceptionMessage('BufferFactory::Buffer(): Argument #1 ($size) must be of type int');
         }
-        $buf = new Buffer(new \stdClass(),NDArray::float32);
+        $buf = $this->factory->Buffer(new \stdClass(),NDArray::float32);
     }
     
     public function testAddr()
     {
-        $buf = new Buffer(4,NDArray::int32);
+        $buf = $this->factory->Buffer(4,NDArray::int32);
         $buf[0] = 10;
         $buf[1] = 11;
         $buf[2] = 12;
@@ -380,7 +387,7 @@ class BufferTest extends TestCase
 
     public function testClone()
     {
-        $buf = new Buffer(4,NDArray::int32);
+        $buf = $this->factory->Buffer(4,NDArray::int32);
         $buf[0] = 10;
         $buf[1] = 11;
         $buf[2] = 12;
