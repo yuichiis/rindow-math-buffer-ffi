@@ -126,7 +126,7 @@ class BufferTest extends TestCase
         $this->assertEquals(NDArray::complex128,$buf->dtype());
         $this->assertEquals(3,count($buf));
         $this->assertEquals(16,$buf->value_size());
-        //$this->assertEquals(NDArray::complex128,$buf->dtype());
+        $this->assertEquals(NDArray::complex128,$buf->dtype());
         $buf[1] = [1.5,2.5];
         $buf[2] = (object)['real'=>3.5,'imag'=>4.5];
         $vv = $buf[1];
