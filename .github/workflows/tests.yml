@@ -70,5 +70,5 @@ jobs:
       #    php_extensions: ffi
 
       - name: PHPUnit Tests
-        run: phpunit -c tests
+        run: phpunit -c tests --debug
 
