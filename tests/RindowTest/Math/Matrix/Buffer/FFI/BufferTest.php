@@ -115,8 +115,8 @@ class BufferTest extends TestCase
         //$this->assertEquals(NDArray::complex64,$buf->dtype());
         $buf[1] = [1.5,2.5];
         $buf[2] = (object)['real'=>3.5,'imag'=>4.5];
-        //$vv = $buf[1];
-        //$this->assertEquals(1.5,$vv->real);
+        $vv = $buf[1];
+        $this->assertEquals(1.5,$vv->real);
         //$this->assertEquals(2.5,$vv->imag);
         //$vv = $buf[2];
         //$this->assertEquals(3.5,$vv->real);
