@@ -21,9 +21,9 @@ class BufferTest extends TestCase
         $this->factory = new BufferFactory();
     }
 
-    protected function isArm64() : bool
+    protected function notSupportComplex() : bool
     {
-        return php_uname('m')=='arm64';        
+        return PHP_OS==='Darwin';
     }
 
     //public function testExtensionVersion()
@@ -113,7 +113,7 @@ class BufferTest extends TestCase
         $this->assertTrue(is_float($buf[0]));
         $this->assertEquals(0.5,$buf[2]);
 
-        if(!$this->isArm64()) {
+        if(!$this->notSupportComplex()) {
             $buf = $this->factory->Buffer(3,NDArray::complex64);
             $this->assertEquals(NDArray::complex64,$buf->dtype());
             $this->assertEquals(3,count($buf));
