@@ -72,7 +72,12 @@ class Buffer implements LinearBuffer
         }
 
         if (self::$ffi === null) {
-            $code = @file_get_contents(__DIR__ . '/buffer.h');
+            if(PHP_OS=='Darwin') {
+                $header = __DIR__ . '/buffer_arm64.h';
+            } else {
+                $header = __DIR__ . '/buffer.h';
+            }
+            $code = @file_get_contents();
             if ($code === false) {
                 throw new RuntimeException("Unable to read buffer.h file");
             }
