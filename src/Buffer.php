@@ -77,7 +77,7 @@ class Buffer implements LinearBuffer
             } else {
                 $header = __DIR__ . '/buffer.h';
             }
-            $code = @file_get_contents();
+            $code = @file_get_contents($header);
             if ($code === false) {
                 throw new RuntimeException("Unable to read buffer.h file");
             }
