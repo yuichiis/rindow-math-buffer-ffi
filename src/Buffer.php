@@ -67,9 +67,6 @@ class Buffer implements LinearBuffer
 
     public function __construct(int $size, int $dtype)
     {
-        if(($dtype===NDArray::complex64||$dtype===NDArray::complex128) && php_uname('m')=='arm64') {
-            throw new InvalidArgumentException("arm64 does not support complex numbers.");
-        }
         if ($size <= 0) {
             throw new InvalidArgumentException("Size must be positive");
         }
@@ -93,7 +90,17 @@ class Buffer implements LinearBuffer
         $this->size = $size;
         $this->dtype = $dtype;
         $declaration = self::$typeString[$dtype];
+        $size = $this->aligned($size,$dtype,16); // 128bit
         $this->data = self::$ffi->new("{$declaration}[{$size}]");
+    }
+
+    protected function aligned(int $size, int $dtype,int $base) : int
+    {
+        $valueSize = self::$valueSize[$dtype];
+        $bytes = $size*$valueSize;
+        $alignedBytes = intdiv(($bytes+$base-1),$base)*$base;
+        $alignedSize = intdiv(($alignedBytes+$valueSize-1),$valueSize)*$valueSize;
+        return $alignedSize;
     }
 
     protected function assertOffset(string $method, mixed $offset) : void

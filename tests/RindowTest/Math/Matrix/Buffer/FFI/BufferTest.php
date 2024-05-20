@@ -23,7 +23,8 @@ class BufferTest extends TestCase
 
     protected function notSupportComplex() : bool
     {
-        return PHP_OS==='Darwin';
+        //return PHP_OS==='Darwin';
+        return false;
     }
 
     //public function testExtensionVersion()
