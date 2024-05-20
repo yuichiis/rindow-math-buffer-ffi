@@ -73,5 +73,7 @@ jobs:
       #    php_extensions: ffi
 
       - name: PHPUnit Tests
-        run: phpunit -c tests
+        run: php test.php
+
+      #  run: phpunit -c tests
 
