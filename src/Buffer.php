@@ -192,7 +192,8 @@ class Buffer implements LinearBuffer
     public function dump() : string
     {
         $byte = self::$valueSize[$this->dtype] * $this->size;
-        $buf = self::$ffi->new("char[$byte]");
+        $alignedBytes = $this->aligned($byte,NDArray::int8,128);
+        $buf = self::$ffi->new("char[$alignedBytes]");
         FFI::memcpy($buf,$this->data,$byte);
         return FFI::string($buf,$byte);
     }
