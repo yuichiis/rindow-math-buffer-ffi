@@ -67,16 +67,15 @@ class Buffer implements LinearBuffer
 
     public function __construct(int $size, int $dtype)
     {
+        if(($dtype===NDArray::complex64||$dtype===NDArray::complex128) && php_uname('m')=='arm64') {
+            throw new InvalidArgumentException("arm64 does not support complex numbers.");
+        }
         if ($size <= 0) {
             throw new InvalidArgumentException("Size must be positive");
         }
 
         if (self::$ffi === null) {
-            if(PHP_OS=='Darwin') {
-                $header = __DIR__ . '/buffer_arm64.h';
-            } else {
-                $header = __DIR__ . '/buffer.h';
-            }
+            $header = __DIR__ . '/buffer.h';
             $code = @file_get_contents($header);
             if ($code === false) {
                 throw new RuntimeException("Unable to read buffer.h file");
