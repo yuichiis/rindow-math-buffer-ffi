@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^PHPDoc tag @var with type Rindow\\Math\\Buffer\\FFI\\complex_t is not subtype of native type FFI\\CData\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Buffer.php

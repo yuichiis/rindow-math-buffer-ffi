@@ -120,7 +120,7 @@ class Buffer implements LinearBuffer
         }
     }
 
-    protected function isComplex(int $dtype=null) : bool
+    protected function isComplex(?int $dtype=null) : bool
     {
         $dtype = $dtype ?? $this->dtype;
         return $dtype === NDArray::complex64 || $dtype === NDArray::complex128;
