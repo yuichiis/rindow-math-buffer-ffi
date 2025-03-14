@@ -30,4 +30,4 @@ $ composer require rindow/rindow-math-buffer-ffi
 
 Known Issues
 ============
-The process hangs on MacOS. The cause is unknown.
+The process hangs on macOS. The cause is unknown.
