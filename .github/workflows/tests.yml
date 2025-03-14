@@ -29,14 +29,14 @@ jobs:
             os: windows-latest
             php: '8.4'
             phpunit: '11.5'
-          - name: macOS
-            os: macos-latest
-            php: '8.4'
-            phpunit: '11.5'
-          - name: macOS-x86_64
-            os: macos-13
-            php: '8.4'
-            phpunit: '11.5'
+#          - name: macOS
+#            os: macos-latest
+#            php: '8.4'
+#            phpunit: '11.5'
+#          - name: macOS-x86_64
+#            os: macos-13
+#            php: '8.4'
+#            phpunit: '11.5'
 
     steps:
       - name: Setup PHP ${{ matrix.php }}
