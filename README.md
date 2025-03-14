@@ -27,3 +27,7 @@ Install using composer.
 ```shell
 $ composer require rindow/rindow-math-buffer-ffi
 ```
+
+Known Issues
+============
+The process hangs on macOS. The cause is unknown.
