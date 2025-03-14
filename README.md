@@ -16,7 +16,7 @@ Please see the documents about Buffer objects on [Rindow Mathematics](https://ri
 Requirements
 ============
 
-- PHP 8.1 or PHP8.2 or PHP8.3
+- PHP 8.1 or PHP8.2 or PHP8.3 or PHP8.4
 - Linux or Windows
 
 How to setup
