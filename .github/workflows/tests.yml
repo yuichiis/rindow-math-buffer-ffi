@@ -78,5 +78,28 @@ jobs:
       #    php_version: ${{ matrix.php }}
       #    php_extensions: ffi
 
+      - name: Enable core dumps
+        run: ulimit -c unlimited
       - name: PHPUnit Tests
         run: phpunit -c tests
+        continue-on-error: true
+        id: run_tests
+
+      - name: Analyze core dump (if test failed)
+        # Run only if the previous step failed
+        if: steps.run_tests.outcome == 'failure'
+        run: |
+          echo "Attempting to analyze core dump..."
+          # Core dump location might vary, check common places
+          CORE_FILE=$(find /cores /var/tmp /tmp -name 'core.*' -print -quit 2>/dev/null)
+          PHP_BIN=$(which php)
+          if [[ -f "$CORE_FILE" && -n "$PHP_BIN" ]]; then
+            echo "Core file found: $CORE_FILE"
+            echo "PHP binary: $PHP_BIN"
+            # Use lldb to get backtrace
+            lldb "$PHP_BIN" -c "$CORE_FILE" -o "bt all" -o "quit"
+          else
+            echo "Core dump file not found or PHP binary not found."
+          fi
+          # Force the job to fail
+          exit 1
