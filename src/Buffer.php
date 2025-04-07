@@ -90,18 +90,18 @@ class Buffer implements LinearBuffer
         $this->size = $size;
         $this->dtype = $dtype;
         $declaration = self::$typeString[$dtype];
-        //$size = $this->aligned($size,$dtype,16); // 128bit
+        $size = $this->aligned($size,$dtype,16); // 128bit
         $this->data = self::$ffi->new("{$declaration}[{$size}]");
     }
 
-    //protected function aligned(int $size, int $dtype,int $base) : int
-    //{
-    //    $valueSize = self::$valueSize[$dtype];
-    //    $bytes = $size*$valueSize;
-    //    $alignedBytes = intdiv(($bytes+$base-1),$base)*$base;
-    //    $alignedSize = intdiv(($alignedBytes+$valueSize-1),$valueSize)*$valueSize;
-    //    return $alignedSize;
-    //}
+    protected function aligned(int $size, int $dtype,int $base) : int
+    {
+        $valueSize = self::$valueSize[$dtype];
+        $bytes = $size*$valueSize;
+        $alignedBytes = intdiv(($bytes+$base-1),$base)*$base;
+        $alignedSize = intdiv(($alignedBytes+$valueSize-1),$valueSize)*$valueSize;
+        return $alignedSize;
+    }
 
     protected function assertOffset(string $method, mixed $offset) : void
     {
@@ -157,13 +157,7 @@ class Buffer implements LinearBuffer
         $this->assertOffset('offsetGet',$offset);
         $value = $this->data[$offset];
         if($this->dtype===NDArray::bool) {
-            // CData (uint8_t) to PHP bool
-            $value = $value !== 0; // Anything other than 0 is true
-        } elseif ($this->isComplex()) {
-            // Convert the FFI structure to a PHP object and return it (if you want to follow the existing behavior)
-            // If necessary, you can convert it to a PHP complex_t here, but
-            // You can also return the FFI CData object as is and access it with ->real, ->imag
-            // return (object)['real' => $value->real, 'imag' => $value->imag];
+            $value = $value ? true : false;
         }
         return $value;
     }
@@ -175,25 +169,18 @@ class Buffer implements LinearBuffer
             if(is_array($value)) {
                 [$real,$imag] = $value;
             } elseif(is_object($value)) {
-                // Consider types other than complex_t (as long as they have properties)
-                if (!property_exists($value, 'real') || !property_exists($value, 'imag')) {
-                    throw new InvalidArgumentException("Complex object must have 'real' and 'imag' properties.");
-                }
                 $real = $value->real;
                 $imag = $value->imag;
             } else {
                 $type = gettype($value);
                 throw new InvalidArgumentException("Cannot convert to complex number.: ".$type);
             }
-            $this->data[$offset]->real = (float)$real;
-            $this->data[$offset]->imag = (float)$imag;
-        } else {
-            // Check if bool and convert PHP bool to int (0 or 1)
-            if ($this->dtype === NDArray::bool) {
-                $value = $value ? 1 : 0;
-            }
-            $this->data[$offset] = $value;
+            /** @var complex_t $value */
+            $value = self::$ffi->new(self::$typeString[$this->dtype]);
+            $value->real = $real;
+            $value->imag = $imag;
         }
+        $this->data[$offset] = $value;
     }
 
     public function offsetUnset(mixed $offset): void
@@ -205,15 +192,10 @@ class Buffer implements LinearBuffer
     public function dump() : string
     {
         $byte = self::$valueSize[$this->dtype] * $this->size;
-        if ($byte === 0) {
-            return '';
-        }
-        // $alignedBytes = $this->aligned($byte,NDArray::int8,128);
-        // $buf = self::$ffi->new("char[$alignedBytes]");
-        // FFI::memcpy($buf,$this->data,$byte);
-        // return FFI::string($buf,$byte);
-        $ptr = FFI::addr($this->data[0]);   
-        return FFI::string(FFI::cast('char*', $ptr), $byte);
+        $alignedBytes = $this->aligned($byte,NDArray::int8,128);
+        $buf = self::$ffi->new("char[$alignedBytes]");
+        FFI::memcpy($buf,$this->data,$byte);
+        return FFI::string($buf,$byte);
     }
 
     public function load(string $string) : void
