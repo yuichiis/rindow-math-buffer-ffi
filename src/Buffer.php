@@ -90,18 +90,18 @@ class Buffer implements LinearBuffer
         $this->size = $size;
         $this->dtype = $dtype;
         $declaration = self::$typeString[$dtype];
-        $size = $this->aligned($size,$dtype,16); // 128bit
+        //$size = $this->aligned($size,$dtype,16); // 128bit
         $this->data = self::$ffi->new("{$declaration}[{$size}]");
     }
 
-    protected function aligned(int $size, int $dtype,int $base) : int
-    {
-        $valueSize = self::$valueSize[$dtype];
-        $bytes = $size*$valueSize;
-        $alignedBytes = intdiv(($bytes+$base-1),$base)*$base;
-        $alignedSize = intdiv(($alignedBytes+$valueSize-1),$valueSize)*$valueSize;
-        return $alignedSize;
-    }
+    //protected function aligned(int $size, int $dtype,int $base) : int
+    //{
+    //    $valueSize = self::$valueSize[$dtype];
+    //    $bytes = $size*$valueSize;
+    //    $alignedBytes = intdiv(($bytes+$base-1),$base)*$base;
+    //    $alignedSize = intdiv(($alignedBytes+$valueSize-1),$valueSize)*$valueSize;
+    //    return $alignedSize;
+    //}
 
     protected function assertOffset(string $method, mixed $offset) : void
     {
@@ -192,10 +192,11 @@ class Buffer implements LinearBuffer
     public function dump() : string
     {
         $byte = self::$valueSize[$this->dtype] * $this->size;
-        $alignedBytes = $this->aligned($byte,NDArray::int8,128);
-        $buf = self::$ffi->new("char[$alignedBytes]");
-        FFI::memcpy($buf,$this->data,$byte);
-        return FFI::string($buf,$byte);
+        //$alignedBytes = $this->aligned($byte,NDArray::int8,128);
+        //$buf = self::$ffi->new("char[$alignedBytes]");
+        //FFI::memcpy($buf,$this->data,$byte);
+        //return FFI::string($buf,$byte);
+        return FFI::string($this->data,$byte);
     }
 
     public function load(string $string) : void
