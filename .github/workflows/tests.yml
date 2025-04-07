@@ -97,8 +97,10 @@ jobs:
           echo "Running PHPUnit tests..."
           PHP_BIN=$(which php)
           # 
+          echo "finding phpunit..."
           PHPUNIT_BIN=$(which phpunit)
           echo "phpunit path is $PHPUNIT_BIN"
+          echo "run phpunit..."
 
           # 
           # 
