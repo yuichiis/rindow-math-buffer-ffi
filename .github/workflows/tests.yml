@@ -100,7 +100,8 @@ jobs:
           echo "finding phpunit..."
           PHPUNIT_BIN=$(which phpunit)
           echo "phpunit path is $PHPUNIT_BIN"
-        
+          echo "run phpunit..."
+
           # 
           # 
           set +e
