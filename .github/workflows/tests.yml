@@ -21,9 +21,21 @@ jobs:
             os: macos-13
             php: '8.4'
             phpunit: '11.5'
+<<<<<<< HEAD
+=======
+          - name: macOS
+            os: macos-latest
+            php: '8.4'
+            phpunit: '11.5'
+          - name: macOS-x86_64
+            os: macos-13
+            php: '8.4'
+            phpunit: '11.5'
+>>>>>>> origin/workspace
 
     steps:
       - name: Setup PHP ${{ matrix.php }}
+        if: ${{ !startsWith(matrix.os, 'macos-') }}
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
@@ -34,18 +46,24 @@ jobs:
           #ini-values: "memory_limit=512M"
           extensions: ffi
 
+      - name: Setup PHP ${{ matrix.php }} (macOS)
+        if: ${{ startsWith(matrix.os, 'macos-') }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          # PHP Extras
+          coverage: none
+          tools: composer, phpstan
+          #ini-values: "memory_limit=512M"
+          extensions: ffi
+
       - name: Checkout codes
         uses: "actions/checkout@v4"
-
-      #- name: Composer
-      #  uses: php-actions/composer@v6
-      #  with:
-      #    php_version: ${{ matrix.php }}
-      #    php_extensions: ffi
 
       - name: Composer
         run: composer update
 
+<<<<<<< HEAD
       #- name: PHP Static Analysys
       #  uses: php-actions/phpstan@v3
       #  with:
@@ -149,3 +167,17 @@ jobs:
           fi
         shell: bash 
       
+=======
+      - name: PHP Static Analysys
+        run: phpstan
+
+      - name: PHPUnit Tests
+        if: ${{ !startsWith(matrix.os, 'macos-') }}
+        run: phpunit -c tests
+
+      - name: PHPUnit Tests(macOS)
+        if: ${{ startsWith(matrix.os, 'macos-') }}
+        run: |
+          composer require --dev phpunit/phpunit=${{ matrix.phpunit }}.*
+          phpunit -c tests
+>>>>>>> origin/workspace
