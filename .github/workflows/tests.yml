@@ -29,7 +29,8 @@ jobs:
           php-version: ${{ matrix.php }}
           # PHP Extras
           coverage: none
-          tools: composer, phpunit:${{ matrix.phpunit }}, phpstan
+          #tools: composer, phpunit:${{ matrix.phpunit }}, phpstan
+          tools: composer
           #ini-values: "memory_limit=512M"
           extensions: ffi
 
@@ -97,8 +98,10 @@ jobs:
           echo "Running PHPUnit tests..."
           PHP_BIN=$(which php)
           # 
+          composer require --dev phpunit/phpunit=11.5.*
           echo "finding phpunit..."
-          PHPUNIT_BIN=$(which phpunit)
+          #PHPUNIT_BIN=$(which phpunit)
+          PHPUNIT_BIN=vendor/bin/phpunit
           echo "phpunit path is $PHPUNIT_BIN"
           echo "run phpunit..."
 
