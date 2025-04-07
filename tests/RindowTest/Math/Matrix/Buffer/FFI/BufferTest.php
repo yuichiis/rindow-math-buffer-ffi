@@ -15,8 +15,6 @@ use FFI;
 
 class BufferTest extends TestCase
 {
-    protected $buffersToKeepAlive = [];
-
     protected object $factory; 
     public function setUp() : void
     {
@@ -37,7 +35,6 @@ class BufferTest extends TestCase
     public function testNormal()
     {
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $buf[0] = 0.5;
         $buf[1] = 1.5;
         $buf[2] = 2.5;
@@ -52,7 +49,6 @@ class BufferTest extends TestCase
     public function testDtypesAndOffsetOfDtypes()
     {
         $buf = $this->factory->Buffer(3,NDArray::bool);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $buf[2] = true;
         $this->assertEquals(NDArray::bool,$buf->dtype());
         $this->assertTrue(is_bool($buf[0]));
@@ -152,7 +148,6 @@ class BufferTest extends TestCase
     public function testOffsetExists()
     {
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->assertTrue(isset($buf[0]));
         $this->assertTrue(isset($buf[2]));
         $this->assertFalse(isset($buf[-1]));
@@ -162,7 +157,6 @@ class BufferTest extends TestCase
     public function testUnset()
     {
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $buf[0] = 1;
         $this->assertEquals(1,$buf[0]);
         $this->expectException(LogicException::class);
@@ -174,7 +168,6 @@ class BufferTest extends TestCase
     public function testDumpAndLoad()
     {
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $buf[0] = 1;
         $buf[1] = 2;
         $buf[2] = 3;
@@ -195,7 +188,6 @@ class BufferTest extends TestCase
     {
         //$buf = new \SplFixedArray(3);
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->expectException(OutOfRangeException::class);
         $this->expectExceptionMessage('Index invalid or out of range');
         $buf[3] = 1;
@@ -205,7 +197,6 @@ class BufferTest extends TestCase
     {
         //$buf = new \SplFixedArray(3);
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->expectException(OutOfRangeException::class);
         $this->expectExceptionMessage('Index invalid or out of range');
         $buf[-1] = 1;
@@ -215,7 +206,6 @@ class BufferTest extends TestCase
     {
         //$buf = new \SplFixedArray(3);
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->expectException(OutOfRangeException::class);
         $this->expectExceptionMessage('Index invalid or out of range');
         $x = $buf[3];
@@ -225,7 +215,6 @@ class BufferTest extends TestCase
     {
         //$buf = new \SplFixedArray(3);
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->expectException(OutOfRangeException::class);
         $this->expectExceptionMessage('Index invalid or out of range');
         $x = $buf[-1];
@@ -235,7 +224,6 @@ class BufferTest extends TestCase
     {
         //$buf = new \SplFixedArray(3);
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Illigal Operation');
         unset($buf[3]);
@@ -246,7 +234,6 @@ class BufferTest extends TestCase
     {
         //$buf = new \SplFixedArray(3);
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Illigal Operation');
         unset($buf[-1]);
@@ -257,7 +244,6 @@ class BufferTest extends TestCase
     {
         //$buf = new \SplFixedArray(3);
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->assertFalse(isset($buf[3]));
     }
 
@@ -265,14 +251,12 @@ class BufferTest extends TestCase
     {
         //$buf = new \SplFixedArray(3);
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->assertFalse(isset($buf[-1]));
     }
 
     public function testOffsetSetWithNoOffset()
     {
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->expectException(ArgumentCountError::class);
         //if(version_compare(PHP_VERSION, '8.0.0')<0) {
         //    $this->expectExceptionMessage('offsetSet() expects exactly 2 parameters, 0 given');
@@ -286,7 +270,6 @@ class BufferTest extends TestCase
     public function testOffsetSetIllegalTypeOffset()
     {
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->expectException(TypeError::class);
         if(version_compare(PHP_VERSION, '8.0.0')<0) {
             $this->expectExceptionMessage('offsetSet() expects parameter 1 to be int');
@@ -299,7 +282,6 @@ class BufferTest extends TestCase
     public function testOffsetGetWithNoOffset()
     {
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->expectException(ArgumentCountError::class);
         //if(version_compare(PHP_VERSION, '8.0.0')<0) {
         //    $this->expectExceptionMessage('offsetGet() expects exactly 1 parameter, 0 given');
@@ -313,7 +295,6 @@ class BufferTest extends TestCase
     public function testOffsetGetIllegalType()
     {
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->expectException(TypeError::class);
         if(version_compare(PHP_VERSION, '8.0.0')<0) {
             $this->expectExceptionMessage('offsetGet() expects parameter 1 to be int');
@@ -326,7 +307,6 @@ class BufferTest extends TestCase
     public function testOffsetUnsetWithNoOffset()
     {
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->expectException(ArgumentCountError::class);
         //if(version_compare(PHP_VERSION, '8.0.0')<0) {
         //    $this->expectExceptionMessage('offsetUnset() expects exactly 1 parameter, 0 given');
@@ -340,7 +320,6 @@ class BufferTest extends TestCase
     public function testOffsetUnsetIllegalType()
     {
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         //$this->expectException(TypeError::class);
         //if(version_compare(PHP_VERSION, '8.0.0')<0) {
         //    $this->expectExceptionMessage('offsetUnset() expects parameter 1 to be int');
@@ -355,7 +334,6 @@ class BufferTest extends TestCase
     public function testLoadWithNoOffset()
     {
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->expectException(ArgumentCountError::class);
         //if(version_compare(PHP_VERSION, '8.0.0')<0) {
         //    $this->expectExceptionMessage('load() expects exactly 1 parameter, 0 given');
@@ -369,7 +347,6 @@ class BufferTest extends TestCase
     public function testLoadIllegalType()
     {
         $buf = $this->factory->Buffer(3,NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $this->expectException(TypeError::class);
         if(version_compare(PHP_VERSION, '8.0.0')<0) {
             $this->expectExceptionMessage('load() expects parameter 1 to be string');
@@ -390,7 +367,6 @@ class BufferTest extends TestCase
         //}
         $this->expectExceptionMessage('Too few arguments to function');
         $buf = $this->factory->Buffer();
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
     }
 
     public function testConstractIllegalType()
@@ -402,13 +378,11 @@ class BufferTest extends TestCase
             $this->expectExceptionMessage('BufferFactory::Buffer(): Argument #1 ($size) must be of type int');
         }
         $buf = $this->factory->Buffer(new \stdClass(),NDArray::float32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
     }
     
     public function testAddr()
     {
         $buf = $this->factory->Buffer(4,NDArray::int32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $buf[0] = 10;
         $buf[1] = 11;
         $buf[2] = 12;
@@ -423,7 +397,6 @@ class BufferTest extends TestCase
     public function testClone()
     {
         $buf = $this->factory->Buffer(4,NDArray::int32);
-        $this->buffersToKeepAlive[] = $buf; // テスト終了まで参照を保持
         $buf[0] = 10;
         $buf[1] = 11;
         $buf[2] = 12;
