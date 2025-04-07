@@ -21,17 +21,6 @@ jobs:
             os: macos-13
             php: '8.4'
             phpunit: '11.5'
-<<<<<<< HEAD
-=======
-          - name: macOS
-            os: macos-latest
-            php: '8.4'
-            phpunit: '11.5'
-          - name: macOS-x86_64
-            os: macos-13
-            php: '8.4'
-            phpunit: '11.5'
->>>>>>> origin/workspace
 
     steps:
       - name: Setup PHP ${{ matrix.php }}
