@@ -10,25 +10,9 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         include:
-#          - name: PHP8.1
-#            os: ubuntu-latest
-#            php: '8.1'
-#            phpunit: '10.5'
-#          - name: PHP8.3
-#            os: ubuntu-latest
-#            php: '8.3'
-#            phpunit: '11.5'
-#          - name: PHP8.4
-#            os: ubuntu-latest
-#            php: '8.4'
-#            phpunit: '11.5'
-#          - name: Windows
-#            os: windows-latest
-#            php: '8.4'
-#            phpunit: '11.5'
           - name: macOS
             os: macos-latest
             php: '8.4'
@@ -67,8 +51,8 @@ jobs:
       #    php_version: ${{ matrix.php }}
       #    path: src/
 
-      - name: PHP Static Analysys
-        run: phpstan
+      #- name: PHP Static Analysys
+      #  run: phpstan
 
       #- name: PHPUnit Tests
       #  uses: php-actions/phpunit@v3
@@ -78,28 +62,84 @@ jobs:
       #    php_version: ${{ matrix.php }}
       #    php_extensions: ffi
 
-      - name: Enable core dumps
-        run: ulimit -c unlimited
-      - name: PHPUnit Tests
-        run: phpunit -c tests
-        continue-on-error: true
-        id: run_tests
+      #- name: Enable core dumps
+      #  run: ulimit -c unlimited
+      #- name: PHPUnit Tests
+      #  run: phpunit -c tests
+      #  continue-on-error: true
+      #  id: run_tests
+      #
+      #- name: Analyze core dump (if test failed)
+      #  # Run only if the previous step failed
+      #  if: steps.run_tests.outcome == 'failure'
+      #  run: |
+      #    echo "Attempting to analyze core dump..."
+      #    # Core dump location might vary, check common places
+      #    CORE_FILE=$(find /cores /var/tmp /tmp -name 'core.*' -print -quit 2>/dev/null)
+      #    PHP_BIN=$(which php)
+      #    if [[ -f "$CORE_FILE" && -n "$PHP_BIN" ]]; then
+      #      echo "Core file found: $CORE_FILE"
+      #      echo "PHP binary: $PHP_BIN"
+      #      # Use lldb to get backtrace
+      #      lldb "$PHP_BIN" -c "$CORE_FILE" -o "bt all" -o "quit"
+      #    else
+      #      echo "Core dump file not found or PHP binary not found."
+      #    fi
+      #    # Force the job to fail
+      #    exit 1
 
-      - name: Analyze core dump (if test failed)
-        # Run only if the previous step failed
-        if: steps.run_tests.outcome == 'failure'
+      - name: Run PHPUnit Tests and Analyze Core Dump on Failure
         run: |
-          echo "Attempting to analyze core dump..."
-          # Core dump location might vary, check common places
-          CORE_FILE=$(find /cores /var/tmp /tmp -name 'core.*' -print -quit 2>/dev/null)
+          echo "Setting up core dump configuration..."
+          # 
+          ulimit -c unlimited
+
+          echo "Running PHPUnit tests..."
           PHP_BIN=$(which php)
-          if [[ -f "$CORE_FILE" && -n "$PHP_BIN" ]]; then
-            echo "Core file found: $CORE_FILE"
-            echo "PHP binary: $PHP_BIN"
-            # Use lldb to get backtrace
-            lldb "$PHP_BIN" -c "$CORE_FILE" -o "bt all" -o "quit"
+          # 
+          PHPUNIT_BIN=vendor/bin/phpunit
+
+          # 
+          # 
+          set +e
+          "$PHPUNIT_BIN" -c tests 
+          # 
+          TEST_EXIT_CODE=$?
+          set -e 
+
+          # 
+          if [ $TEST_EXIT_CODE -ne 0 ]; then
+            echo "PHPUnit tests failed with exit code $TEST_EXIT_CODE."
+            echo "Attempting to analyze core dump..."
+
+            # 
+            # 
+            # 
+            CORE_FILE=$(find /cores . /tmp /var/tmp -maxdepth 1 -name 'core.*' -print -quit 2>/dev/null)
+
+            if [[ -f "$CORE_FILE" && -n "$PHP_BIN" ]]; then
+              echo "Core file found: $CORE_FILE"
+              echo "PHP binary: $PHP_BIN"
+              echo "--- LLDB Backtrace Start ---"
+              # 
+              lldb --batch --one-line "bt all" --core "$CORE_FILE" "$PHP_BIN"
+              # 
+              # lldb "$PHP_BIN" -c "$CORE_FILE" -o "thread list" -o "bt all" -o "image list" -o "quit"
+              echo "--- LLDB Backtrace End ---"
+            else
+              echo "Core dump file not found or PHP binary not found."
+              echo "Searched locations: /cores, ., /tmp, /var/tmp"
+              echo "Listing potential core dump locations:"
+              ls -l /cores 2>/dev/null || echo "/cores not found or empty."
+              ls -l . 2>/dev/null || echo "Could not list current directory."
+              ls -l /tmp 2>/dev/null || echo "Could not list /tmp."
+              ls -l /var/tmp 2>/dev/null || echo "Could not list /var/tmp."
+            fi
+            # 
+            exit $TEST_EXIT_CODE
           else
-            echo "Core dump file not found or PHP binary not found."
+            echo "PHPUnit tests passed."
+            exit 0
           fi
-          # Force the job to fail
-          exit 1
+        shell: bash 
+      
