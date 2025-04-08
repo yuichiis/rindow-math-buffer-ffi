@@ -41,20 +41,6 @@ jobs:
 
     steps:
       - name: Setup PHP ${{ matrix.php }}
-        if: ${{ !startsWith(matrix.os, 'macos-') }}
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          # PHP Extras
-          coverage: none
-          tools: composer, phpunit:${{ matrix.phpunit }}, phpstan
-          #ini-values: "memory_limit=512M"
-          extensions: ffi
-        env:
-          fail-fast: true
-
-      - name: Setup PHP ${{ matrix.php }} (macOS)
-        if: ${{ startsWith(matrix.os, 'macos-') }}
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
@@ -62,7 +48,7 @@ jobs:
           coverage: none
           tools: composer, phpstan
           #ini-values: "memory_limit=512M"
-          extensions: ffi
+          extensions: ffi,mbstring
         env:
           fail-fast: true
 
@@ -70,17 +56,12 @@ jobs:
         uses: "actions/checkout@v4"
 
       - name: Composer
-        run: composer update
+        run: | 
+          composer update
+          composer require --dev phpunit/phpunit=^${{ matrix.phpunit }}
 
       - name: PHP Static Analysys
         run: phpstan
 
       - name: PHPUnit Tests
-        if: ${{ !startsWith(matrix.os, 'macos-') }}
-        run: phpunit -c tests
-
-      - name: PHPUnit Tests(macOS)
-        if: ${{ startsWith(matrix.os, 'macos-') }}
-        run: |
-          composer require --dev phpunit/phpunit=${{ matrix.phpunit }}.*
-          vendor/bin/phpunit -c tests
+        run: vendor/bin/phpunit -c tests
