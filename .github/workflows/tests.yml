@@ -60,7 +60,7 @@ jobs:
           coverage: none
           tools: composer, phpstan
           #ini-values: "memory_limit=512M"
-          extensions: ffi
+          extensions: ffi,mbstring
 
       - name: Checkout codes
         uses: "actions/checkout@v4"
