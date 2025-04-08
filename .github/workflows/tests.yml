@@ -47,9 +47,9 @@ jobs:
           php-version: ${{ matrix.php }}
           # PHP Extras
           coverage: none
-          tools: composer, phpunit:${{ matrix.phpunit }}.*, phpstan
+          tools: composer, phpunit:${{ matrix.phpunit }}, phpstan
           #ini-values: "memory_limit=512M"
-          extensions: ffi
+          extensions: ffi,mbstring
 
       - name: Setup PHP ${{ matrix.php }} (macOS)
         if: ${{ startsWith(matrix.os, 'macos-') }}
@@ -60,7 +60,7 @@ jobs:
           coverage: none
           tools: composer, phpstan
           #ini-values: "memory_limit=512M"
-          extensions: ffi
+          extensions: ffi,mbstring
 
       - name: Checkout codes
         uses: "actions/checkout@v4"
