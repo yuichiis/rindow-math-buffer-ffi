@@ -47,7 +47,7 @@ jobs:
           php-version: ${{ matrix.php }}
           # PHP Extras
           coverage: none
-          tools: composer, phpunit:${{ matrix.phpunit }}.*, phpstan
+          tools: composer, phpunit:${{ matrix.phpunit }}, phpstan
           #ini-values: "memory_limit=512M"
           extensions: ffi
 
