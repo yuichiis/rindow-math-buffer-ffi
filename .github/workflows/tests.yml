@@ -58,7 +58,7 @@ jobs:
       - name: Composer
         run: | 
           composer update
-          composer require --dev phpunit/phpunit=^11.5
+          composer require --dev phpunit/phpunit=^${{ matrix.phpunit }}
 
       - name: PHP Static Analysys
         run: phpstan
