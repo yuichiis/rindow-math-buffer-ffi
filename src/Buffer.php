@@ -169,7 +169,8 @@ class Buffer implements LinearBuffer
             if(is_array($value)) {
                 [$real,$imag] = $value;
             } elseif(is_object($value)) {
-                if (!property_exists($value, 'real') || !property_exists($value, 'imag')) {
+                if (!($value instanceof FFI\CData) &&
+                    (!property_exists($value, 'real') || !property_exists($value, 'imag'))) {
                     throw new InvalidArgumentException("Complex object must have 'real' and 'imag' properties.");
                 }
                 $real = $value->real;
