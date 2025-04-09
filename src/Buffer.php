@@ -131,6 +131,11 @@ class Buffer implements LinearBuffer
         return $this::$valueSize[$this->dtype];
     }
 
+    public function valueSize() : int
+    {
+        return $this->value_size();
+    }
+
     public function addr(int $offset) : FFI\CData
     {
         return FFI::addr($this->data[$offset]);
