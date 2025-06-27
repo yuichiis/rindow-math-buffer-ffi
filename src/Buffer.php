@@ -185,6 +185,12 @@ class Buffer implements LinearBuffer
             if ($this->dtype === NDArray::bool) {
                 $value = $value ? 1 : 0;
             }
+            if(is_object($value)) {
+                throw new InvalidArgumentException("object value is not supported. ".get_class($value). " given.");
+            }
+            if(is_object($offset)) {
+                throw new InvalidArgumentException("object offset is not supported. ".get_class($offset). " given.");
+            }
             $this->data[$offset] = $value;
         }
     }
