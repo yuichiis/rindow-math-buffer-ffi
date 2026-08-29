@@ -29,9 +29,9 @@ jobs:
           - os: macos-latest
             php: '8.5'
             phpunit: '11.5'
-          - os: macos-13
-            php: '8.5'
-            phpunit: '11.5'
+          # - os: macos-13
+          #   php: '8.5'
+          #   phpunit: '11.5'
 
     name: PHP ${{ matrix.php }} for ${{ matrix.os }}
 
