@@ -131,6 +131,11 @@ class Buffer implements LinearBuffer
         return $this::$valueSize[$this->dtype];
     }
 
+    public function valueSize() : int
+    {
+        return $this->value_size();
+    }
+
     public function addr(int $offset) : FFI\CData
     {
         return FFI::addr($this->data[$offset]);
@@ -164,7 +169,8 @@ class Buffer implements LinearBuffer
             if(is_array($value)) {
                 [$real,$imag] = $value;
             } elseif(is_object($value)) {
-                if (!property_exists($value, 'real') || !property_exists($value, 'imag')) {
+                if (!($value instanceof FFI\CData) &&
+                    (!property_exists($value, 'real') || !property_exists($value, 'imag'))) {
                     throw new InvalidArgumentException("Complex object must have 'real' and 'imag' properties.");
                 }
                 $real = $value->real;
@@ -178,6 +184,12 @@ class Buffer implements LinearBuffer
         } else {
             if ($this->dtype === NDArray::bool) {
                 $value = $value ? 1 : 0;
+            }
+            if(is_object($value)) {
+                throw new InvalidArgumentException("object value is not supported. ".get_class($value). " given.");
+            }
+            if(is_object($offset)) {
+                throw new InvalidArgumentException("object offset is not supported. ".get_class($offset). " given.");
             }
             $this->data[$offset] = $value;
         }

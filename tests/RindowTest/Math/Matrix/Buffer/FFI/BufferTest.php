@@ -128,6 +128,11 @@ class BufferTest extends TestCase
             $vv = $buf[2];
             $this->assertEquals(3.5,$vv->real);
             $this->assertEquals(4.5,$vv->imag);
+            $this->assertInstanceof(FFI\CData::class,$vv);
+            $buf[1] = $vv;
+            $vv = $buf[1];
+            $this->assertEquals(3.5,$vv->real);
+            $this->assertEquals(4.5,$vv->imag);
         
             $buf = $this->factory->Buffer(3,NDArray::complex128);
             $this->assertEquals(NDArray::complex128,$buf->dtype());
@@ -140,6 +145,11 @@ class BufferTest extends TestCase
             $this->assertEquals(1.5,$vv->real);
             $this->assertEquals(2.5,$vv->imag);
             $vv = $buf[2];
+            $this->assertEquals(3.5,$vv->real);
+            $this->assertEquals(4.5,$vv->imag);
+            $this->assertInstanceof(FFI\CData::class,$vv);
+            $buf[1] = $vv;
+            $vv = $buf[1];
             $this->assertEquals(3.5,$vv->real);
             $this->assertEquals(4.5,$vv->imag);
         }
