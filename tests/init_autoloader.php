@@ -6,6 +6,6 @@ if(COMPOSER_HOME && file_exists(COMPOSER_HOME.'/vendor/autoload.php')) {
     throw new \Exception("Loader is not found.");
 }
 $loader->addPsr4('Rindow\\Math\\Buffer\\FFI\\',__DIR__.'/../src');
-$loader->addPsr4('Interop\\Polite\\Math\\', __DIR__.'/../../../interop-phpobjects/polite-math/src');
+$loader->addPsr4('Interop\\Polite\\Math\\', __DIR__.'/../../polite-math/src');
 
 return $loader;
